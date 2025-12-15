@@ -24,7 +24,7 @@ def fetch_and_store_stock_data(
         df = pd.DataFrame() 
         
         if report_type == "price":
-            df = stock.history(period="2mo", interval="1d")
+            df = stock.history(period="2mo", interval="2d")
             if df.empty:
                 raise ValueError(f"No price data found for {ticker}")
             
