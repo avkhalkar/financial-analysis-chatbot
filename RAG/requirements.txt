@@ -1,2 +1,4 @@
 requests
 pymupdf
+yfinance
+pyarrow
