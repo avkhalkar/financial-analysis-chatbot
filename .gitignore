@@ -1,0 +1,89 @@
+venv/*
+data/*
+
+
+
+# =========================
+# Python
+# =========================
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+
+# =========================
+# Virtual Environments
+# =========================
+venv/
+.env/
+.env.*
+.venv/
+
+# =========================
+# Data Artifacts (RAG)
+# =========================
+data/
+*.parquet
+*.csv
+*.jsonl
+
+# =========================
+# Vector DB / Embeddings
+# =========================
+pinecone/
+chroma/
+chromadb/
+faiss/
+index/
+indexes/
+
+# =========================
+# Model / LLM Caches
+# =========================
+.cache/
+.cache/**
+.huggingface/
+.hf/
+models/
+model_cache/
+
+# =========================
+# Logs
+# =========================
+logs/
+*.log
+
+# =========================
+# Jupyter / Experiments
+# =========================
+.ipynb_checkpoints/
+notebooks/.ipynb_checkpoints/
+
+# =========================
+# OS / Editor Junk
+# =========================
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# =========================
+# Secrets
+# =========================
+.env.local
+.env.production
+.env.development
+secrets/
+*.key
+*.pem
+
+# =========================
+# Build / Distribution
+# =========================
+build/
+dist/
