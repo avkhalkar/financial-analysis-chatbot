@@ -1,14 +1,3 @@
-# 
-# INDEXING SCRIPT.
-# Purpose:
-# - Indexes data already present on disk
-# - Handles:
-#   1) unstructured/data.json (SEC)
-#   2) structured/*.json (narrated financial summaries)
-# - Uses local embeddings
-# - Upserts to Pinecone
-# - One namespace per ticker
-# 
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -46,6 +35,9 @@ def batched(items, size):
         yield items[i:i + size]
 
 
+#  Bulk upsert (S + U data)
+
+#  S
 def index_unstructured(ticker: str, base_path: str):
     path = os.path.join(base_path, "unstructured", "data.json")
     if not os.path.exists(path):
@@ -87,6 +79,7 @@ def index_unstructured(ticker: str, base_path: str):
     print("Unstructured indexing complete.")
 
 
+#  U
 def index_narrated_financials(ticker: str, base_path: str):
     struct_dir = os.path.join(base_path, "structured")
     if not os.path.exists(struct_dir):
@@ -137,6 +130,8 @@ def index_narrated_financials(ticker: str, base_path: str):
     print("Structured indexing complete.")
 
 
+
+#  S + U
 def index_all_data(ticker: str):
    
     base_path = os.path.join("..","data", ticker)
@@ -150,6 +145,21 @@ def index_all_data(ticker: str):
     
     print("="*40)
     print(f"Finished all tasks for {ticker}\n")
+
+#  Incremental upert
+
+def get_index():
+    return index
+
+def upsert_to_namespace(ids, vectors, metas, ticker):
+    payload=list(zip(ids,vectors,metas))
+    for batch in batched(payload, BATCH_SIZE):
+        index.upsert(vectors==batch, namespace=ticker)
+
+
+
+
+# Test/Main
 
 if __name__ == "__main__":
     if len(sys.argv) != 2:
