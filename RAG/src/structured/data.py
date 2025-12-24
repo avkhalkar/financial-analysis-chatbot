@@ -3,10 +3,17 @@ import pandas as pd
 import os
 from datetime import datetime, timezone
 from typing import Literal, cast
-from data_serialization import seralize_paraquet
+from pathlib import Path
 import json
 
-BASE_DIR = "../../../data"
+# Import serialization from same package
+try:
+    from .data_serialization import seralize_paraquet
+except ImportError:
+    from data_serialization import seralize_paraquet
+
+# Base data directory (resolved from this file's location)
+BASE_DIR = Path(__file__).resolve().parents[3] / "data"
 
 def fetch_and_store_stock_data(
     ticker: str,
@@ -62,20 +69,20 @@ def fetch_and_store_stock_data(
         df["_meta_fetched_at"] = fetched_at.isoformat()
         df["_meta_data_version"] = "v1.0"
 
-        out_dir = os.path.join(BASE_DIR, ticker, "structured")
-        os.makedirs(out_dir, exist_ok=True)
+        out_dir = BASE_DIR / ticker / "structured"
+        out_dir.mkdir(parents=True, exist_ok=True)
 
-        parquet_path = os.path.join(out_dir, f"{report_type}.parquet")
+        parquet_path = out_dir / f"{report_type}.parquet"
         df.to_parquet(parquet_path, index=False)
 
-        docs = seralize_paraquet(parquet_path)
+        docs = seralize_paraquet(str(parquet_path))
 
-        json_path = os.path.join(out_dir, f"{report_type}.json")
+        json_path = out_dir / f"{report_type}.json"
         with open(json_path, "w", encoding="utf-8") as f:
             json.dump(docs, f, indent=2)
 
         print(f"Stored structured data for {ticker} ({report_type}) → {out_dir}")
-        return parquet_path
+        return str(parquet_path)
 
     except Exception as e:
         print(f"Error processing {ticker} ({report_type}): {e}")

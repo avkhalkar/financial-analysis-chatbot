@@ -131,19 +131,31 @@ def index_narrated_financials(ticker: str, base_path: str):
 
 
 
+# Base data directory (resolved from this file's location)
+from pathlib import Path
+BASE_DATA_DIR = Path(__file__).resolve().parents[3] / "data"
+
+
 #  S + U
-def index_all_data(ticker: str):
-   
-    base_path = os.path.join("..","data", ticker)
-    
+def index_all_data(ticker: str, base_path: str = None):
+    """
+    Index all data (structured + unstructured) for a ticker.
+
+    Args:
+        ticker: Stock ticker symbol
+        base_path: Optional base path override (default: project_root/data/TICKER)
+    """
+    if base_path is None:
+        base_path = str(BASE_DATA_DIR / ticker)
+
     print(f"\nStarting full indexing for: {ticker}")
-    print("="*40)
-    
+    print("=" * 40)
+
     index_unstructured(ticker, base_path)
     print("-" * 20)
     index_narrated_financials(ticker, base_path)
-    
-    print("="*40)
+
+    print("=" * 40)
     print(f"Finished all tasks for {ticker}\n")
 
 #  Incremental upert
@@ -152,9 +164,10 @@ def get_index():
     return index
 
 def upsert_to_namespace(ids, vectors, metas, ticker):
-    payload=list(zip(ids,vectors,metas))
+    """Upsert vectors to a specific namespace (ticker)."""
+    payload = list(zip(ids, vectors, metas))
     for batch in batched(payload, BATCH_SIZE):
-        index.upsert(vectors==batch, namespace=ticker)
+        index.upsert(vectors=batch, namespace=ticker)
 
 
 
