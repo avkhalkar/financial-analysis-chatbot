@@ -10,6 +10,7 @@ data/*
 __pycache__/
 *.py[cod]
 *.pyo
+*.pyc
 *.pyd
 *.so
 *.egg-info/
